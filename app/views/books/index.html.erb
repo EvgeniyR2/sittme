@@ -1,0 +1,27 @@
+<%= button_to 'New book', new_book_path, method: :get %>
+
+<%= button_to 'prev', books_path, method: :get, params: { command: 'prev_page', cursor: @books.first } %>
+<%= button_to 'next', books_path, method: :get, params: { command: 'next_page', cursor: @books.last } %>
+
+<table>
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Genre</th>
+      <th>Created at</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @books.each do |book| %>
+      <tr>
+        <td><%= book.id %></td>
+        <td><%= book.title %></td>
+        <td><%= book.author %></td>
+        <td><%= book.genre %></td>
+        <td><%= book.created_at %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
