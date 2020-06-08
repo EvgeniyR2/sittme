@@ -2,7 +2,7 @@
 
 class BooksController < ApplicationController
   def index
-    @books = BooksForPagination.call(params[:command], params[:cursor])
+    @books = BooksForPagination.new.call(params[:command], params[:cursor])
     respond_to do |format|
       format.html
       format.json { render json: BookSerializer.for_collection.new(@books).to_json }

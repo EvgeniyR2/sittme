@@ -1,16 +1,25 @@
 # frozen_string_literal: true
 
 class BooksForPagination
-  def self.call(command, cursor, quantity = 10)
+  def call(command, cursor, quantity = 10)
     case command
-    when 'prev_page'
-      books = Book.where('id < :value', value: cursor.to_i).last(quantity)
-      books = Book.first(quantity) if books.empty?
-    when 'next_page'
-      books = Book.where('id > :value', value: cursor.to_i).first(quantity)
-      books = Book.last(quantity) if books.empty?
-    else books = Book.first(quantity)
+    when 'prev_page' then books_prev_page(cursor, quantity)
+    when 'next_page' then books_next_page(cursor, quantity)
+    else Book.order(:created_at).first(quantity)
     end
+  end
+
+  private
+
+  def books_prev_page(cursor, quantity)
+    books = Book.where('id < :value', value: cursor.to_i).order(:created_at).last(quantity)
+    books = Book.order(:created_at).first(quantity) if books.empty?
+    books
+  end
+
+  def books_next_page(cursor, quantity)
+    books = Book.where('id > :value', value: cursor.to_i).order(:created_at).first(quantity)
+    books = Book.order(:created_at).last(quantity) if books.empty?
     books
   end
 end

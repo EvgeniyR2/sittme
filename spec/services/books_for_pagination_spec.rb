@@ -14,8 +14,8 @@ RSpec.describe BooksForPagination do
       let(:command) { nil }
 
       it 'get 10 first books' do
-        books = BooksForPagination.call(command, nil)
-        expect(books).to eq(Book.first(quantity))
+        books = BooksForPagination.new.call(command, nil)
+        expect(books).to eq(Book.order(:created_at).first(quantity))
       end
     end
 
@@ -24,14 +24,14 @@ RSpec.describe BooksForPagination do
 
       it 'get 10 books before 12th ' do
         cursor = Book.first.id + 11
-        books = BooksForPagination.call(command, cursor, quantity)
-        expect(books).to eq(Book.where("id < :value", value: cursor.to_i).last(quantity))
+        books = BooksForPagination.new.call(command, cursor, quantity)
+        expect(books).to eq(Book.where("id < :value", value: cursor.to_i).order(:created_at).last(quantity))
       end
 
       it 'get 10 first books if cursor nil' do
         cursor = nil
-        books = BooksForPagination.call(command, cursor)
-        expect(books).to eq(Book.first(quantity))
+        books = BooksForPagination.new.call(command, cursor)
+        expect(books).to eq(Book.order(:created_at).first(quantity))
       end
     end
 
@@ -39,15 +39,15 @@ RSpec.describe BooksForPagination do
       let(:command) { 'next_page' }
 
       it 'get 10 books after 1th ' do
-        cursor = Book.first.id
-        books = BooksForPagination.call(command, cursor, quantity)
-        expect(books).to eq(Book.where("id > :value", value: cursor.to_i).first(quantity))
+        cursor = Book.order(:created_at).first.id
+        books = BooksForPagination.new.call(command, cursor, quantity)
+        expect(books).to eq(Book.where("id > :value", value: cursor.to_i).order(:created_at).first(quantity))
       end
 
       it 'get 10 last books if cursor too big' do
-        cursor = Book.last.id + 1
-        books = BooksForPagination.call(command, cursor)
-        expect(books).to eq(Book.last(quantity))
+        cursor = Book.order(:created_at).last.id + 1
+        books = BooksForPagination.new.call(command, cursor)
+        expect(books).to eq(Book.order(:created_at).last(quantity))
       end
     end
   end
